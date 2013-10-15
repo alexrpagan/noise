@@ -6,6 +6,7 @@ import wave
 import sys
 from Queue import Queue
 from threading import Thread
+from collections import deque
 
 CHUNK = 1024
 FORMAT = pyaudio.paInt16
@@ -14,7 +15,7 @@ RATE = 44100
 INPUT_BLOCK_TIME = 0.05
 INPUT_FRAMES_PER_BLOCK = int(RATE*INPUT_BLOCK_TIME)
 WINDOW_SIZE = 1
-MAX = 500
+MAX = 1000
 
 def play_audio(filename, q):
 
@@ -36,17 +37,21 @@ def play_audio(filename, q):
 
     loudness = 1
 
+    window = deque([1],maxlen=10)
+
     while True:
         for chunk in chunks:
             if not q.empty():
                 loudness = q.get()
-            if loudness == -1:
-                stream.stop_stream()
-                stream.close()
-                p.terminate()
-                q.task_done()
-                return
-            s = numpy.fromstring(chunk, numpy.int16) * loudness
+                if loudness == -1:
+                    stream.stop_stream()
+                    stream.close()
+                    p.terminate()
+                    q.task_done()
+                    return
+                else:
+                    window.append(loudness)
+            s = numpy.fromstring(chunk, numpy.int16) * float(sum(window)/len(window))
             s = struct.pack('h'*len(s), *s)
             stream.write(s)
 
