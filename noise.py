@@ -51,7 +51,7 @@ def play_audio(filename, q):
                     return
                 else:
                     window.append(loudness)
-            adjustment = float(sum(window)/len(window))
+            adjustment = float(sum(window))/len(window)
             s = numpy.fromstring(chunk, numpy.int16) * adjustment
             s = struct.pack('h'*len(s), *s)
             stream.write(s)
