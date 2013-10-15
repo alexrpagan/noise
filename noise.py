@@ -14,8 +14,8 @@ CHANNELS = 2
 RATE = 44100
 INPUT_BLOCK_TIME = 0.05
 INPUT_FRAMES_PER_BLOCK = int(RATE*INPUT_BLOCK_TIME)
-WINDOW_SIZE = 1
-MAX = 1000
+WINDOW_SIZE = .5
+MAX = 500
 
 def play_audio(filename, q):
 
@@ -37,7 +37,7 @@ def play_audio(filename, q):
 
     loudness = 1
 
-    window = deque([1],maxlen=10)
+    window = deque([1],maxlen=5)
 
     while True:
         for chunk in chunks:
@@ -51,7 +51,8 @@ def play_audio(filename, q):
                     return
                 else:
                     window.append(loudness)
-            s = numpy.fromstring(chunk, numpy.int16) * float(sum(window)/len(window))
+            adjustment = float(sum(window)/len(window))
+            s = numpy.fromstring(chunk, numpy.int16) * adjustment
             s = struct.pack('h'*len(s), *s)
             stream.write(s)
 
