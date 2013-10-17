@@ -1,15 +1,14 @@
 noise
 =====
 
-Simply select a WAV file with the sound to repeat:
+Requires python, numpy, and pyaudio.
 
-  python noise.py noise.wav
+To use, simply indicate the WAV file with the noise to repeat.
+
+    python noise.py noise.wav
   
 Noise will adaptively adjust the volume of the noise sample based on the level of ambient noise in the room.
 
 TODOS:
-
-- smoothing for volume changes
-- better model for detecting periods of relative noisiness (e.g., conversation)
-- parameter tuning
+- (more) parameter tuning
 
